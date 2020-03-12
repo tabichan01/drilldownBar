@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Drilldown Bar Chart</title>
+
+  <!-- load CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400">    <!-- Google web font "Open Sans" -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">                                        <!-- https://getbootstrap.com/ -->
+  <link rel="stylesheet" href="css/templatemo-style.css">                                     <!-- Templatemo style -->
+
+  <script>
+    var renderPage = true;
+
+    if(navigator.userAgent.indexOf('MSIE')!==-1
+      || navigator.appVersion.indexOf('Trident/') > 0){
+        /* Microsoft Internet Explorer detected in. */
+        alert("Please view this in a modern browser such as Chrome or Microsoft Edge.");
+        renderPage = false;
+    }
+  </script>
+
+</head>
+
+<body>
+  <!-- Loader -->
+  <div id="loader-wrapper">
+    <div id="loader"></div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+  </div>
+
+ <div class="container">
+
+  <!-- 1st section -->
+  <section class="row tm-section">
+   <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0">
+    <div class="tm-flex-center p-5 tm-bg-color-primary tm-section-min-h">
+      <h1 class="tm-text-color-white tm-site-name">Bar Chart</h1>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+    <div class="tm-flex-center p-5">
+      <p>A bar chart or bar graph is a chart or graph that presents categorical data with rectangular bars with heights or lengths proportional to the values that they represent. 
+	  The bars can be plotted vertically or horizontally</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2nd section -->
+<section class="row tm-section tm-col-md-reverse">
+ <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+  <!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<p style="position: relative; top: 10px;">Click to View Results</p>
+<!-- Add 2 buttons -->
+<button onclick="update(data1)" style="position:relative; top: 5px; background-color: #000000; color: white;">View Boys</button>
+<button onclick="update(data2)" style="position:relative; top: 5px; background-color: #000000; color: white;">View Girls</button>
+
+<!-- Create a div where the graph will take place -->
+<div id="button"></div>
+<script>
+
+// create 2 data_set
+var data1 = [
+   {group: "Adam", value: 60},
+   {group: "Ben", value: 50},
+   {group: "Charles", value: 70},
+   {group: "David", value: 90},
+   {group: "Elijah", value: 40},
+   {group: "Frank", value: 50},
+   {group: "George", value: 40},
+];
+
+var data2 = [
+   {group: "Amy", value: 70},
+   {group: "Bonnie", value: 80},
+   {group: "Cameron", value: 90},
+   {group: "Daisy", value: 30},
+   {group: "Eli", value: 60},
+   {group: "Farah", value: 90},
+   
+];
+
+// set the dimensions and margins of the graph
+var margin = {top: 30, right: 30, bottom: 70, left: 60},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#button")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Initialize the X axis
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .padding(0.2);
+var xAxis = svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+
+// Initialize the Y axis
+var y = d3.scaleLinear()
+  .range([ height, 0]);
+var yAxis = svg.append("g")
+  .attr("class", "myYaxis")
+
+
+// A function that create / update the plot for a given variable:
+function update(data) {
+
+  // Update the X axis
+  x.domain(data.map(function(d) { return d.group; }))
+  xAxis.call(d3.axisBottom(x))
+
+  // Update the Y axis
+  y.domain([0, d3.max(data, function(d) { return d.value }) ]);
+  yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+  // Create the u variable
+  var u = svg.selectAll("rect")
+    .data(data)
+
+  u
+    .enter()
+    .append("rect") // Add a new rect for each new elements
+    .merge(u) // get the already existing elements as well
+    .transition() // and apply changes to all of them
+    .duration(1000)
+      .attr("x", function(d) { return x(d.group); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", "#4C1A1A")
+
+  // If less group in the new dataset, I delete the ones not in use anymore
+  u
+    .exit()
+    .remove()
+}
+
+// Initialize the plot with the first dataset
+update(data1)
+
+</script>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0">
+  <div class="tm-flex-center p-5 tm-bg-color-primary">
+    <div class="tm-max-w-400 tm-flex-center tm-flex-col">
+       <p style="color:white;">
+	   The bar chart shows the latest test score base on their gender.  
+	   <br />
+	   <strong><u>Answer the following:</u></strong> <br />
+	   Q1) Who scored the highest in the class?<br />
+	   Q2) What is the mean score of the class?<br />
+	   Q3) Which gender scored better? <br />Explain your answer.
+	   
+	   </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 3rd Section -->
+<section class="row tm-section tm-mb-30">
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0">
+    <div class="tm-flex-center p-5 tm-bg-color-primary tm-section-min-h">
+     
+	  <p class="tm-text-color-white">
+	  <strong><font size="6">Stacked Bar Chart</font></strong> <br />
+	  A stacked bar chart is a variant of the bar chart. 
+	  A standard bar chart compares individual data points with each other. 
+	  In a stacked bar chart, parts of the data stacked (in the case of vertical bars, aka columns); 
+	  each bar displays a total amount, broken down into sub-amounts. 
+	  <br />
+	  <br />
+	  Equivalent subsections are the same color in each bar. 
+	  This formatting makes it easy to compare both the whole picture and the components of each bar, 
+	  as seen in the data. <i>(Hover to view exact value)</i>
+	  </p>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+    <div class="tm-flex-center p-5">
+      <div class="tm-flex-center tm-flex-col">
+	<strong><u>Answer the following:</u></strong> <br />
+		Q4) Find the total value for subgroup, stress<br /> <br />
+		Q5) Given that 	subgroup, stress is 7y and<br /> 7y + 2z = 'sorgho', 
+		find the value of z.
+	</p>
+	<!-- Load d3.js -->
+	<script src="https://d3js.org/d3.v4.js"></script>
+
+	<!-- Create a div where the graph will take place -->
+	<div id="hoverBar"></div>
+		<script>
+		// set the dimensions and margins of the graph
+		var hoverMargin = {top: 10, right: 30, bottom: 20, left: 50},
+			hoverWidth = 460 - hoverMargin.left - hoverMargin.right,
+			hoverHeight = 350 - hoverMargin.top - hoverMargin.bottom;
+
+		// append the svg object to the body of the page
+		var hoverSVG = d3.select("#hoverBar")
+		  .append("svg")
+			.attr("width", hoverWidth + hoverMargin.left + hoverMargin.right)
+			.attr("height", hoverHeight + hoverMargin.top + hoverMargin.bottom)
+		  .append("g")
+			.attr("transform",
+				  "translate(" + hoverMargin.left + "," + hoverMargin.top + ")");
+
+		// Parse the Data
+		d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_stacked.csv", function(data) {
+
+		  // List of subgroups = header of the csv files = soil condition here
+		  var subgroups = data.columns.slice(1)
+
+		  // List of groups = species here = value of the first column called group -> I show them on the X axis
+		  var groups = d3.map(data, function(d){return(d.group)}).keys()
+
+		  // Add X axis
+		  var x = d3.scaleBand()
+			  .domain(groups)
+			  .range([0, hoverWidth])
+			  .padding([0.2])
+		  hoverSVG.append("g")
+			.attr("transform", "translate(0," + hoverHeight + ")")
+			.call(d3.axisBottom(x).tickSizeOuter(0));
+
+		  // Add Y axis
+		  var y = d3.scaleLinear()
+			.domain([0, 60])
+			.range([ hoverHeight, 0 ]);
+		  hoverSVG.append("g")
+			.call(d3.axisLeft(y));
+
+		  // color palette = one color per subgroup
+		  var color = d3.scaleOrdinal()
+			.domain(subgroups)
+			.range(['#E5CCCC','#9ACCCC','#997373'])
+
+		  //stack the data? --> stack per subgroup
+		  var stackedData = d3.stack()
+			.keys(subgroups)
+			(data)
+
+		  // ----------------
+		  // Create a tooltip
+		  // ----------------
+		  var tooltip = d3.select("#hoverBar")
+			.append("div")
+			.style("opacity", 0)
+			.attr("class", "tooltip")
+			.style("background-color", "white")
+			.style("border", "solid")
+			.style("border-width", "1px")
+			.style("border-radius", "5px")
+			.style("padding", "10px")
+
+		  // Three function that change the tooltip when user hover / move / leave a cell
+		  var mouseover = function(d) {
+			var subgroupName = d3.select(this.parentNode).datum().key;
+			var subgroupValue = d.data[subgroupName];
+			tooltip
+				.html("subgroup: " + subgroupName + "<br>" + "Value: " + subgroupValue)
+				.style("opacity", 1)
+		  }
+		  var mousemove = function(d) {
+			tooltip
+			  .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+			  .style("top", (d3.mouse(this)[1]) + "px")
+		  }
+		  var mouseleave = function(d) {
+			tooltip
+			  .style("opacity", 0)
+		  }
+
+		  // Show the bars
+		  hoverSVG.append("g")
+			.selectAll("g")
+			// Enter in the stack data = loop key per key = group per group
+			.data(stackedData)
+			.enter().append("g")
+			  .attr("fill", function(d) { return color(d.key); })
+			  .selectAll("rect")
+			  // enter a second time = loop subgroup per subgroup to add all rectangles
+			  .data(function(d) { return d; })
+			  .enter().append("rect")
+				.attr("x", function(d) { return x(d.data.group); })
+				.attr("y", function(d) { return y(d[1]); })
+				.attr("height", function(d) { return y(d[0]) - y(d[1]); })
+				.attr("width",x.bandwidth())
+				.attr("stroke", "grey")
+			  .on("mouseover", mouseover)
+			  .on("mousemove", mousemove)
+			  .on("mouseleave", mouseleave)
+
+		})
+
+		</script>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 4th section -->
+	<section class="row tm-section tm-col-md-reverse">
+			<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+			<script src="https://code.jquery.com/jquery-1.12.4.min.js" charset="utf-8"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+			<script src="https://d3js.org/d3.v4.min.js"></script>
+			
+			<p style="position: relative; top: 20px;"><strong>The chart shows the number of items shipped by XYZ Shipping.</strong></p>
+			<div id="Barchart" style= "height:550px; width:400px">
+			<p style="position: relative; left:80px; top: 10px;"><strong>Total Number of Items Shipped per Category</strong></p>
+			<p style="position: relative; left:120px; top: -15px;">Click to view individual sub-category</p>
+			<div class="barCont" style="overflow: auto; bottom:70px; height:81% ; width:100%; position: relative; overflow: hidden;"></div>
+			</div>
+
+				<script type="text/javascript">
+					var salesData;
+					var truncLength = 30;
+						$(document).ready(function () {
+							Plot();
+							});
+							function Plot() {
+								TransformChartData(chartData, chartOptions);
+								BuildBar("Barchart", chartData, chartOptions);
+							}
+
+							function BuildBar(id, chartData, options, level) {
+								chart = d3.select("#" + id + " .barCont");
+
+								var marginBar = { top: 100, right: 10, bottom: 30, left: 50 },
+								width = $($("#" + id + " .barCont")[0]).outerWidth() - marginBar.left - marginBar.right,
+								height = $($("#" + id + " .barCont")[0]).outerHeight() - marginBar.top - marginBar.bottom
+								var xVarName;
+								var yVarName = options[0].yaxis;
+
+								if (level == 1) {
+									xVarName = options[0].xaxisl1;
+								}
+								else {
+									xVarName = options[0].xaxis;
+								}
+
+								var xAry = runningData.map(function (el) {
+									return el[xVarName];
+								});
+
+								var yAry = runningData.map(function (el) {
+									return el[yVarName];
+								});
+
+								var capAry = runningData.map(function (el) { return el.caption; });
+
+
+								var x = d3.scaleBand().domain(xAry).rangeRound([0, width], .5);
+								var y = d3.scaleLinear().domain([0, d3.max(runningData, function (d) { return d[yVarName]; })]).range([height, 0]);
+								var rcolor = d3.scaleOrdinal().range(runningColors);
+
+								chart = chart
+											.append("svg")  //append svg element inside #chart
+											.attr("width", width + marginBar.left + marginBar.right)    //set width
+											.attr("height", height + marginBar.top + marginBar.bottom);  //set height
+
+								var bar = chart.selectAll("g")
+												.data(runningData)
+												.enter()
+												.append("g")
+												.attr("transform", function (d) {
+													return "translate(" + x(d[xVarName]) + ", 0)";
+												});
+
+								var ctrtxt = 0;
+								var xAxis = d3.axisBottom()
+											.scale(x)
+											.ticks(xAry.length)
+											.tickFormat(function (d) {
+												if (level == 0) {
+													var mapper = options[0].captions[0]
+													return mapper[d]
+												}
+												else {
+													var r = runningData[ctrtxt].caption;
+													ctrtxt += 1;
+													return r;
+												}
+											});
+
+								var yAxis = d3.axisLeft()
+												.scale(y)
+												.ticks(5); //orient left because y-axis tick labels will appear on the left side of the axis.
+
+								bar.append("rect")
+									.attr("y", function (d) {
+										return y(d.Total) + marginBar.top - 15;
+									})
+									.attr("x", function (d) {
+										return (marginBar.left + (x.bandwidth()) / 4);
+									})
+									.on("mouseenter", function (d) {
+										d3.select(this)
+											.attr("stroke", "white")
+											.attr("stroke-width", 1)
+											.attr("y", function (d) {
+												return y(d.Total) + marginBar.top - 20;
+											})
+											.attr("height", function (d) {
+												return height - y(d[yVarName]) + 5;
+											})
+											.attr("x", function (d) {
+												return (marginBar.left - 5 + (x.bandwidth()) / 4);
+											})
+											.attr("width", (x.bandwidth())/2 + 10)
+											.transition()
+											.duration(200);
+
+
+									})
+									.on("mouseleave", function (d) {
+										d3.select(this)
+											.attr("stroke", "none")
+											.attr("y", function (d) {
+												return y(d[yVarName]) + marginBar.top - 15;
+											})
+											.attr("height", function (d) {
+												return height - y(d[yVarName]);
+											})
+											.attr("x", function (d) {
+												return (marginBar.left + (x.bandwidth()) / 4);
+											})
+											.attr("width", (x.bandwidth()) / 2)
+											.transition()
+											.duration(200);
+
+									})
+									.on("click", function (d) {
+										if (this._listenToEvents) {
+											// Reset inmediatelly
+											d3.select(this).attr("transform", "translate(0,0)")
+											// Change level on click if no transition has started
+											path.each(function () {
+												this._listenToEvents = false;
+											});
+										}
+										d3.selectAll("#" + id + " svg").remove();
+										if (level == 1) {
+											TransformChartData(chartData, options, 0, d[xVarName]);
+											BuildBar(id, chartData, options, 0);
+										}
+										else {
+											var nonSortedChart = chartData.sort(function (a, b) {
+												return parseFloat(b[options[0].yaxis]) - parseFloat(a[options[0].yaxis]);
+											});
+											TransformChartData(nonSortedChart, options, 1, d[xVarName]);
+											BuildBar(id, nonSortedChart, options, 1);
+										}
+
+									});
+
+
+								bar.selectAll("rect")
+								.transition()
+								.duration(1000)
+								.attr("height", function (d) {
+									return height - y(d[yVarName]);
+								})
+								.attr("width", (x.bandwidth()) / 2); //set width base on range on ordinal data;
+
+								//setTimeout( 1000)
+								bar.selectAll("rect").style("fill", function (d) {
+									return rcolor(d[xVarName]);
+								}),
+
+								bar.append("text")
+									.attr("x", x.bandwidth() / 2 + marginBar.left - 10)
+									.attr("y", function (d) { return y(d[yVarName]) + marginBar.top - 25; })
+									.attr("dy", ".35em")
+									.text(function (d) {
+										return d[yVarName];
+									});
+
+								bar.append("svg:title")
+									.text(function (d) {
+										return d["title"] + " (" + d[yVarName] + ")";
+									});
+
+
+								chart.append("g")
+									.attr("class", "x axis")
+									.attr("transform", "translate(" + marginBar.left + "," + (height + marginBar.top - 15) + ")")
+									.call(xAxis)
+								.append("text")
+									.attr("x", width)
+									.attr("y", -6)
+								.style("text-anchor", "end")
+								//.text("Year");
+
+								chart.append("g")
+									.attr("class", "y axis")
+									.attr("transform", "translate(" + marginBar.left + "," + (marginBar.top - 15) + ")")
+									.call(yAxis)
+									.append("text")
+									.attr("transform", "rotate(-90)")
+									.attr("y", 6)
+									.attr("dy", ".71em")
+									.style("text-anchor", "end")
+
+								if (level == 1) {
+									chart.select(".x.axis")
+									.selectAll("text")
+									.attr("transform", " translate(-20,10) rotate(-35)");
+								}
+
+							}
+
+							function TransformChartData(chartData, opts, level, filter) {
+								var result = [];
+								var resultColors = [];
+								var counter = 0;
+								var hasMatch;
+								var xVarName;
+								var yVarName = opts[0].yaxis;
+
+								if (level == 1) {
+									xVarName = opts[0].xaxisl1;
+
+									for (var i in chartData) {
+										hasMatch = false;
+										for (var index = 0; index < result.length; ++index) {
+											var data = result[index];
+
+											if ((data[xVarName] == chartData[i][xVarName]) && (chartData[i][opts[0].xaxis]) == filter) {
+												result[index][yVarName] = result[index][yVarName] + chartData[i][yVarName];
+												hasMatch = true;
+												break;
+											}
+
+										}
+										if ((hasMatch == false) && ((chartData[i][opts[0].xaxis]) == filter)) {
+											if (result.length < 9) {
+												ditem = {}
+												ditem[xVarName] = chartData[i][xVarName];
+												ditem[yVarName] = chartData[i][yVarName];
+												ditem["caption"] = chartData[i][xVarName].substring(0, 10) + '...';
+												ditem["title"] = chartData[i][xVarName];
+												ditem["op"] = 1.0 - parseFloat("0." + (result.length));
+												result.push(ditem);
+
+												resultColors[counter] = opts[0].color[0][chartData[i][opts[0].xaxis]];
+
+												counter += 1;
+											}
+										}
+									}
+								}
+								else {
+									xVarName = opts[0].xaxis;
+
+									for (var i in chartData) {
+										hasMatch = false;
+										for (var index = 0; index < result.length; ++index) {
+											var data = result[index];
+
+											if (data[xVarName] == chartData[i][xVarName]) {
+												result[index][yVarName] = result[index][yVarName] + chartData[i][yVarName];
+												hasMatch = true;
+												break;
+											}
+										}
+										if (hasMatch == false) {
+											ditem = {};
+											ditem[xVarName] = chartData[i][xVarName];
+											ditem[yVarName] = chartData[i][yVarName];
+											ditem["caption"] = opts[0].captions != undefined ? opts[0].captions[0][chartData[i][xVarName]] : "";
+											ditem["title"] = opts[0].captions != undefined ? opts[0].captions[0][chartData[i][xVarName]] : "";
+											ditem["op"] = 1;
+											result.push(ditem);
+
+											resultColors[counter] = opts[0].color != undefined ? opts[0].color[0][chartData[i][xVarName]] : "";
+
+											counter += 1;
+										}
+									}
+								}
+
+
+								runningData = result;
+								runningColors = resultColors;
+								return;
+							}
+
+
+							var chartData = [
+								{
+									"Category": "Furniture",
+									"Sub-Category": "Bookcases",
+									"Total": 276
+								},
+								{
+									"Category": "Furniture",
+									"Sub-Category": "Chairs",
+									"Total": 674
+								},
+								{
+									"Category": "Furniture",
+									"Sub-Category": "Furnishings",
+									"Total": 1097
+								},
+								{
+									"Category": "Furniture",
+									"Sub-Category": "Tables",
+									"Total": 390
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Applicances",
+									"Total": 654
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Art",
+									"Total": 1101
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Binders",
+									"Total": 2067
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Envelopes",
+									"Total": 241
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Fasteners",
+									"Total": 249
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Labels",
+									"Total": 448
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Paper",
+									"Total": 1702
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Storage",
+									"Total": 1022
+								},
+								{
+									"Category": "Office Supplies",
+									"Sub-Category": "Supplies",
+									"Total": 192
+								},
+								{
+									"Category": "Technology",
+									"Sub-Category": "Accessories",
+									"Total": 1079
+								},
+								{
+									"Category": "Technology",
+									"Sub-Category": "Copiers",
+									"Total": 73
+								},
+								{
+									"Category": "Technology",
+									"Sub-Category": "Machines",
+									"Total": 121
+								},
+								{
+									"Category": "Technology",
+									"Sub-Category": "Phones",
+									"Total": 1090
+								}
+							];
+							chartOptions = [{
+								"captions": [{ "Office Supplies": "Office Supplies", "Technology": "Technology", "Furniture": "Furniture" }],
+								"color": [{ "Office Supplies": "#E6CDCD", "Technology": "#CDCDE6", "Furniture": "#c05f6e" }],
+								"xaxis": "Category",
+								"xaxisl1": "Sub-Category",
+								"yaxis": "Total"
+							}]
+
+</script>
+		
+</div>
+<div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 p-0">
+  <div class="tm-flex-center p-5 tm-bg-color-primary">
+    <div class="tm-max-w-400 tm-flex-center tm-flex-col">
+        <p class="tm-text-color-white">
+			<strong><font size="6">Drilldown Chart</font></strong> <br /> <br />
+		
+			<strong><u>Answer the following:</u></strong> <br />
+			Q6) What is the total number of items shipped <br />  <br />
+			Q7) Given that the shipping company earned a total amount of $50,000 for phones and accessories,
+			how much do they charged for a single item shipped?<br />	Round your answer to 2 decimal place.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+
+
+</div>
+<!-- load JS -->
+<script src="js/jquery-3.2.1.slim.min.js"></script>         <!-- https://jquery.com/ -->
+<script>
+
+  /* DOM is ready
+  ------------------------------------------------*/
+  $(function(){
+
+    if(renderPage) {
+      $('body').addClass('loaded');
+    }
+
+    $('.tm-current-year').text(new Date().getFullYear());  // Update year in copyright
+  });
+
+</script>
+
+</body>
+</html>
